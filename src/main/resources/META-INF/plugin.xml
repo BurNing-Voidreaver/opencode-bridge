@@ -1,0 +1,39 @@
+<idea-plugin>
+    <id>com.opencode.bridge</id>
+    <name>OpenCode Bridge</name>
+    <version>0.1.0</version>
+    <vendor url="https://opencode.ai">OpenCode</vendor>
+
+    <description><![CDATA[
+        Bridge plugin for OpenCode - connects the OpenCode CLI in your terminal to the IDE.
+        Provides MCP server for IDE capabilities: diagnostics, selection context, file access.
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <ul>
+            <li>0.1.0: Initial release. MCP server with get_diagnostics, get_selection, read_file tools.</li>
+        </ul>
+    ]]></change-notes>
+
+    <idea-version since-build="242"/>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.opencode.bridge.auth.TokenManager"/>
+    </extensions>
+
+    <actions>
+        <action id="com.opencode.bridge.OpenAction"
+                class="com.opencode.bridge.actions.OpenOpencodeAction"
+                text="Open OpenCode"
+                description="Open OpenCode in terminal"
+                icon="AllIcons.Actions.Execute">
+            <keyboard-shortcut keymap="$default" first-keystroke="control ESCAPE"/>
+            <!-- ToolsMenu is always available; EditorToolBar only exists when an
+                 editor is open, so registering there breaks plugin loading in
+                 headless/testing environments. -->
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>

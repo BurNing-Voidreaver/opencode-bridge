@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.24'
+    id 'org.jetbrains.intellij.platform' version '2.2.1'
+}
+
+group = 'com.opencode'
+version = '0.1.0'
+
+repositories {
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    maven { url 'https://maven.aliyun.com/repository/google' }
+    intellijPlatform {
+        defaultRepositories()
+    }
+    // The IntelliJ test-framework maven artifact cannot be fetched from the
+    // JetBrains cloudfront CDN in this environment. The full platform SDK is
+    // already present locally (downloaded by the intellijPlatform plugin), so
+    // resolve the test framework from there as a flat directory repository.
+    flatDir {
+        dirs rootProject.file("test-sdk")
+    }
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24'
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    testImplementation('org.jetbrains.kotlin:kotlin-test:1.9.24')
+    testImplementation('com.jetbrains.intellij.platform:test-framework')
+
+    intellijPlatform {
+        create('IC', '2024.2')
+        bundledPlugin('org.jetbrains.plugins.terminal')
+        instrumentationTools()
+    }
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions.jvmTarget = '17'
+}
+
+patchPluginXml {
+    sinceBuild = '242'
+    untilBuild = '252.*'
+}
+
+runIde {
+    maxHeapSize = '2g'
+}
+
+// Code instrumentation requires downloading java-compiler-ant-tasks from a
+// JetBrains cloudfront CDN that is not reachable from this environment.
+// Instrumentation is an optional optimisation, not required to run the plugin.
+// Disable the download; instrumentedJar falls back to the uninstrumented classes.
+["instrumentCode", "instrumentTestCode"].each { taskName ->
+    tasks.matching { it.name == taskName }.configureEach { enabled = false }
+}

@@ -1,0 +1,24 @@
+# Build outputs
+build/
+.gradle/
+gradlew.bat
+
+# Local SDK mirror for tests (large binary)
+/test-sdk/
+
+# IDE / editor
+.idea/
+*.iml
+.vscode/
+.intellijPlatform/
+
+# Claude / agent working state
+.clast/
+.claude/
+.claude.json
+.omo/
+.agents/
+
+# OS
+.DS_Store
+Thumbs.db
