@@ -15,9 +15,10 @@
         </ul>
     ]]></change-notes>
 
-    <idea-version since-build="242"/>
+    <idea-version since-build="242" until-build="261.*"/>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.opencode.bridge.auth.TokenManager"/>
@@ -26,14 +27,16 @@
     <actions>
         <action id="com.opencode.bridge.OpenAction"
                 class="com.opencode.bridge.actions.OpenOpencodeAction"
-                text="Open OpenCode"
+                text="Open Code"
                 description="Open OpenCode in terminal"
-                icon="AllIcons.Actions.Execute">
+                icon="icons/opencode.svg">
             <keyboard-shortcut keymap="$default" first-keystroke="control ESCAPE"/>
             <!-- ToolsMenu is always available; EditorToolBar only exists when an
                  editor is open, so registering there breaks plugin loading in
                  headless/testing environments. -->
             <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <!-- Main toolbar, right side (top-right corner of the IDE). -->
+            <add-to-group group-id="MainToolbarRight" anchor="last"/>
         </action>
     </actions>
 </idea-plugin>
