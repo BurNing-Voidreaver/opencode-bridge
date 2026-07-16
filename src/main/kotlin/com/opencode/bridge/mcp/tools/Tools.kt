@@ -1,11 +1,15 @@
 package com.opencode.bridge.mcp.tools
 
 import com.google.gson.JsonObject
+import com.intellij.openapi.project.Project
 
 abstract class McpTool {
     abstract val name: String
     abstract val description: String
     abstract val inputSchema: String
+
+    @Volatile
+    var project: Project? = null
 
     abstract fun execute(arguments: JsonObject?): Any
 }
@@ -26,8 +30,7 @@ open class GetDiagnosticsTool : McpTool() {
     """.trimIndent()
 
     override fun execute(arguments: JsonObject?): Any {
-        val project = com.intellij.openapi.project.ProjectManager.getInstance().openProjects.firstOrNull()
-            ?: return "No open project"
+        val project = project ?: return "No project bound"
 
         val filePath = arguments?.get("file_path")?.asString
 
@@ -99,8 +102,7 @@ class GetSelectionTool : McpTool() {
     """.trimIndent()
 
     override fun execute(arguments: JsonObject?): Any {
-        val project = com.intellij.openapi.project.ProjectManager.getInstance().openProjects.firstOrNull()
-            ?: return "No open project"
+        val project = project ?: return "No project bound"
 
         val editor = com.intellij.openapi.fileEditor.FileEditorManager.getInstance(project).selectedTextEditor
             ?: return "No active editor"

@@ -7,23 +7,32 @@ import com.opencode.bridge.mcp.McpServer
 
 class PluginLifecycleListener : ProjectManagerListener {
     private val LOG = Logger.getInstance(PluginLifecycleListener::class.java)
-    private val mcpServer = McpServer()
 
+    private val servers = mutableMapOf<Project, McpServer>()
+
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun projectOpened(project: Project) {
+        val server = McpServer(project)
+        servers[project] = server
         try {
-            mcpServer.start()
-            LOG.info("OpenCode Bridge MCP Server started")
+            server.start()
+            LOG.info("MCP Server started for project: ${project.name}")
         } catch (e: Exception) {
-            LOG.error("Failed to start MCP Server", e)
+            LOG.error("Failed to start MCP Server for project: ${project.name}", e)
+            servers.remove(project)
         }
     }
 
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun projectClosed(project: Project) {
-        try {
-            mcpServer.stop()
-            LOG.info("OpenCode Bridge MCP Server stopped")
-        } catch (e: Exception) {
-            LOG.error("Failed to stop MCP Server", e)
+        val server = servers.remove(project)
+        if (server != null) {
+            try {
+                server.stop()
+                LOG.info("MCP Server stopped for project: ${project.name}")
+            } catch (e: Exception) {
+                LOG.error("Failed to stop MCP Server for project: ${project.name}", e)
+            }
         }
     }
 }

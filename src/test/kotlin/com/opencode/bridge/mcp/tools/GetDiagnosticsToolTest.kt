@@ -19,14 +19,14 @@ import com.intellij.testFramework.UsefulTestCase
 class GetDiagnosticsToolTest : CodeInsightFixtureTestBase() {
 
     fun testNoFileFoundWhenEditorIsEmpty() {
-        val tool = GetDiagnosticsTool()
+        val tool = GetDiagnosticsTool().apply { project = fixture.project }
         // Do not configure any file; the active editor has no document/file.
         val result = tool.execute(JsonObject()) as String
         UsefulTestCase.assertEquals("No file found", result)
     }
 
     fun testNoDiagnosticsWhenCollectorReturnsEmpty() {
-        val tool = TestableGetDiagnosticsTool(emptyList())
+        val tool = TestableGetDiagnosticsTool(emptyList()).apply { project = fixture.project }
         fixture.configureByText(FileTypes.PLAIN_TEXT, "just a plain line\n")
 
         val result = tool.execute(JsonObject()) as String
@@ -38,7 +38,7 @@ class GetDiagnosticsToolTest : CodeInsightFixtureTestBase() {
         val infoOnly = listOf(
             fakeHighlight(HighlightSeverity.INFORMATION, "info thing", 0, 4)
         )
-        val tool = TestableGetDiagnosticsTool(infoOnly)
+        val tool = TestableGetDiagnosticsTool(infoOnly).apply { project = fixture.project }
         fixture.configureByText(FileTypes.PLAIN_TEXT, "just a plain line\n")
 
         val result = tool.execute(JsonObject()) as String
@@ -50,7 +50,7 @@ class GetDiagnosticsToolTest : CodeInsightFixtureTestBase() {
             fakeHighlight(HighlightSeverity.ERROR, "unexpected token", 0, 4),
             fakeHighlight(HighlightSeverity.WARNING, "unused value", 10, 20)
         )
-        val tool = TestableGetDiagnosticsTool(highlights)
+        val tool = TestableGetDiagnosticsTool(highlights).apply { project = fixture.project }
         fixture.configureByText(FileTypes.PLAIN_TEXT, "just a plain line with more text\n")
 
         val result = tool.execute(JsonObject()) as String
@@ -71,7 +71,7 @@ class GetDiagnosticsToolTest : CodeInsightFixtureTestBase() {
         val highlights = listOf(
             fakeHighlight(HighlightSeverity.ERROR, "boom", 8, 11)
         )
-        val tool = TestableGetDiagnosticsTool(highlights)
+        val tool = TestableGetDiagnosticsTool(highlights).apply { project = fixture.project }
         fixture.configureByText(FileTypes.PLAIN_TEXT, "line1\nline2\n")
 
         val result = tool.execute(JsonObject()) as String

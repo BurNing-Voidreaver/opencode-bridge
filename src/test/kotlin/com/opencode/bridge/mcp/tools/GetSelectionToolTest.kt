@@ -16,6 +16,7 @@ class GetSelectionToolTest : CodeInsightFixtureTestBase() {
 
     override fun setUp() {
         super.setUp()
+        tool.project = fixture.project
         fixture.configureByText(FileTypes.PLAIN_TEXT, "alpha\nbeta\ngamma\n")
     }
 

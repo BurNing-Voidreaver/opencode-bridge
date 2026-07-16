@@ -6,7 +6,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonParser
 import com.sun.net.httpserver.HttpServer
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.diagnostic.Logger
 import com.opencode.bridge.auth.TokenManager
 import com.opencode.bridge.mcp.tools.GetDiagnosticsTool
@@ -19,7 +19,7 @@ import java.net.InetSocketAddress
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Executors
 
-class McpServer {
+class McpServer(private val project: Project) {
     private val LOG = Logger.getInstance(McpServer::class.java)
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private var server: HttpServer? = null
@@ -27,7 +27,7 @@ class McpServer {
         "get_diagnostics" to GetDiagnosticsTool(),
         "get_selection" to GetSelectionTool(),
         "read_file" to ReadFileTool()
-    )
+    ).onEach { (_, tool) -> tool.project = project }
 
     fun start() {
         if (server != null) return
