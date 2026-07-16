@@ -5,13 +5,21 @@
     <vendor url="https://opencode.ai">OpenCode</vendor>
 
     <description><![CDATA[
-        Bridge plugin for OpenCode - connects the OpenCode CLI in your terminal to the IDE.
-        Provides MCP server for IDE capabilities: diagnostics, selection context, file access.
+        <p>OpenCode Bridge connects your JetBrains IDE to the <a href="https://opencode.ai">OpenCode AI coding assistant</a> running in the terminal.</p>
+        <p>With OpenCode Bridge, you can launch OpenCode with a single click from the toolbar or with Ctrl+Esc, and let it see what's happening in your IDE through an integrated MCP server. OpenCode gets live access to your editor context without you having to copy-paste file contents or error messages.</p>
+        <p><b>Features</b></p>
+        <ul>
+            <li>One-click OpenCode launch from the main toolbar or Tools menu (Ctrl+Esc)</li>
+            <li>OpenCode sees IDE diagnostics, your current selection, and file contents via MCP</li>
+            <li>Bearer-token authenticated MCP server, auto-starts when you open a project</li>
+            <li>Built-in detection of the opencode CLI with a helpful message if it's missing</li>
+        </ul>
+        <p>Requires the <a href="https://opencode.ai">opencode CLI</a> to be installed on your system.</p>
     ]]></description>
 
     <change-notes><![CDATA[
         <ul>
-            <li>0.1.0: Initial release. MCP server with get_diagnostics, get_selection, read_file tools.</li>
+            <li><b>0.1.0</b> — Initial release: toolbar launch, MCP server with get_diagnostics / get_selection / read_file tools.</li>
         </ul>
     ]]></change-notes>
 
