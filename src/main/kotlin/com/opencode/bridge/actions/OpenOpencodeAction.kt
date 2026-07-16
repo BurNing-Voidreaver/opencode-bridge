@@ -3,14 +3,21 @@ package com.opencode.bridge.actions
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.wm.ToolWindowManager
+import org.jetbrains.plugins.terminal.TerminalToolWindowFactory
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import java.io.File
 
 class OpenOpencodeAction : AnAction() {
     private val LOG = Logger.getInstance(OpenOpencodeAction::class.java)
+
+    companion object {
+        private const val TAB_NAME = "Open Code"
+    }
 
     init {
         templatePresentation.text = "Open Code"
@@ -41,9 +48,12 @@ class OpenOpencodeAction : AnAction() {
 
         val terminalManager = TerminalToolWindowManager.getInstance(project)
 
-        // createLocalShellWidget is deprecated in 2024.2 but remains the only
-        // API that returns a ShellTerminalWidget with executeCommand(); it is
-        // supported across the whole since/until build range, so we keep it.
+        val existing = findOpenCodeTab(terminalManager)
+        if (existing != null) {
+            focusExistingTab(project, terminalManager, existing)
+            return
+        }
+
         val widget = terminalManager.createLocalShellWidget(
             project.basePath ?: ".",
             "Open Code"
@@ -51,6 +61,27 @@ class OpenOpencodeAction : AnAction() {
 
         val command = getOpencodeCommand()
         widget.executeCommand(command)
+    }
+
+    private fun findOpenCodeTab(manager: TerminalToolWindowManager) =
+        manager.terminalWidgets.firstOrNull { widget ->
+            manager.getContainer(widget)?.content?.displayName == TAB_NAME
+        }
+
+    private fun focusExistingTab(
+        project: Project,
+        manager: TerminalToolWindowManager,
+        widget: com.intellij.terminal.ui.TerminalWidget
+    ) {
+        ApplicationManager.getApplication().invokeLater {
+            if (project.isDisposed) return@invokeLater
+            val toolWindow = manager.getToolWindow()
+                ?: ToolWindowManager.getInstance(project)
+                    .getToolWindow(TerminalToolWindowFactory.TOOL_WINDOW_ID)
+            val content = manager.getContainer(widget)?.content ?: return@invokeLater
+            toolWindow?.contentManager?.setSelectedContent(content, true)
+            toolWindow?.activate({ widget.requestFocus() }, true)
+        }
     }
 
     /** Check whether the `opencode` executable is reachable on the system PATH. */
