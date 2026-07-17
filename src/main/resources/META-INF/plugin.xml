@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.opencode.bridge</id>
     <name>OpenCode Bridge</name>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <vendor url="https://opencode.ai">OpenCode</vendor>
 
     <description><![CDATA[
@@ -19,7 +19,8 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li><b>0.1.0</b> — Initial release: toolbar launch, MCP server with get_diagnostics / get_selection / read_file tools.</li>
+            <li><b>0.2.0</b> — MCP server with get_diagnostics / get_selection / read_file tools, bearer-token auth, and unit tests. Build pinned to JDK 17 and corrected IntelliJ platform API usage.</li>
+            <li><b>0.1.0</b> — Initial release: toolbar launch, MCP server scaffolding.</li>
         </ul>
     ]]></change-notes>
 
